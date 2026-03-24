@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+﻿using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -7,25 +7,41 @@ namespace RhytmXT;
 
 public class Game1 : Game
 {
-    private GraphicsDeviceManager _graphics;
-    private SpriteBatch _spriteBatch;
+    GraphicsDeviceManager _graphics;
+    SpriteBatch _spriteBatch;
     Cursor _cursor;
     GameField _gameField;
     Settings settings;
 
     float backgroundDim, rectangleDim;
 
+    SpriteFont _font;
+    int _frameCount;
+    double _elapsedTime, _fps;
+    Vector2 textSize;
+
+    static int screenWidth;
+    static int screenHeight;
+
     public Game1()
     {
         _graphics = new GraphicsDeviceManager(this);
         Content.RootDirectory = "Content";
+
+        IsFixedTimeStep = false;
+        _graphics.SynchronizeWithVerticalRetrace = false;
+        _graphics.ApplyChanges();
     }
 
     protected override void Initialize()
     {
         _cursor = new Cursor();
-        _gameField = new GameField();
         FullScreen(_graphics);
+
+        screenWidth = GraphicsDevice.Viewport.Width;
+        screenHeight = GraphicsDevice.Viewport.Height;
+
+        _gameField = new GameField(screenWidth);
 
         base.Initialize();
     }
@@ -35,6 +51,8 @@ public class Game1 : Game
         _spriteBatch = new SpriteBatch(GraphicsDevice);
         _cursor.LoadContent(Content);
         _gameField.LoadContent(Content, GraphicsDevice);
+
+        _font = Content.Load<SpriteFont>("DefaultFont");
 
         settings = Settings.Load();
         backgroundDim = settings.backgroundDim;
@@ -47,6 +65,19 @@ public class Game1 : Game
             Exit();
 
         _cursor.Update();
+        _gameField.Update(gameTime);
+
+        _elapsedTime += gameTime.ElapsedGameTime.TotalSeconds;
+        _frameCount++;
+
+        if (_elapsedTime >= 1.0)
+        {
+            _fps = _frameCount;
+            _frameCount = 0;
+            _elapsedTime = 0;
+        }
+        
+        textSize = _font.MeasureString($"{_fps} fps");
 
         base.Update(gameTime);
     }
@@ -59,6 +90,10 @@ public class Game1 : Game
 
         _gameField.Draw(_spriteBatch, backgroundDim, rectangleDim);
         _cursor.Draw(_spriteBatch);
+
+        _spriteBatch.DrawString(_font, $"{_fps} fps",
+                                new Vector2(screenWidth - textSize.X - 10, screenHeight - textSize.Y - 10),
+                                Color.White);
 
         _spriteBatch.End();
 

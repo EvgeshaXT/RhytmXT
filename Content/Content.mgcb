@@ -25,11 +25,24 @@
 /processorParam:TextureFormat=Color
 /build:cursor.png
 
+#begin DefaultFont.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:DefaultFont.spritefont
+
 #begin GameField/audio.ogg
 /importer:OggImporter
 /processor:SongProcessor
 /processorParam:Quality=Best
 /build:GameField/audio.ogg
+
+#begin GameField/Calvin Harris - Feel So Close (SKIYE DnB Remix).mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:GameField/Calvin Harris - Feel So Close (SKIYE DnB Remix).mp3
 
 #begin GameField/image.jpg
 /importer:TextureImporter

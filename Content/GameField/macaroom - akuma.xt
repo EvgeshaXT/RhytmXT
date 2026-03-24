@@ -1,0 +1,8 @@
+v0.0.1
+
+[General]
+AudioFilename: audio.ogg
+BackgroundFilename: image.jpg
+
+[Timings]
+1001,128
