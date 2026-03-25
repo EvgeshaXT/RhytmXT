@@ -15,24 +15,36 @@ public class GameField
     readonly int _screenWidth;
 
     Vector2 _tactPosition;
-    float _tactSpeed, _bpm, _offset;
+    float _tactSpeed, _bpm;
+    int _offset;
     bool _tactMoving, _songStarted;
 
     string _audioName, _backgroundName;
+    string _mapPath;
 
-    public GameField(int screenWidth)
+    ApproachCircle _approachCircle;
+    Vector2 _approachCirclePosition;
+    public float _rectangleDim;
+
+    Notes _notes;
+
+    public GameField(int screenWidth, float rectangleDim)
     {
-        _map = "Calvin Harris - Feel So Close (SKIYE DnB Remix).xt";
+        _map = "macaroom - akuma.xt";
         _screenWidth = screenWidth;
+        _rectangleDim = rectangleDim;
 
         // Load _audioName, _backgroundName, _bpm, _offset
         LoadMapData();
 
-        _tactPosition = new Vector2(_screenWidth / 2, 300);
+        _tactPosition = new Vector2(350, 300);
         _tactSpeed = GetTactSpeed(_bpm);
 
         _tactMoving = false;
         _songStarted = false;
+
+        _approachCirclePosition = new Vector2(350, 410);
+        _notes = new Notes(_screenWidth, _tactSpeed, _approachCirclePosition.X);
     }
 
     public void LoadContent(ContentManager content, GraphicsDevice graphicsDevice)
@@ -41,6 +53,12 @@ public class GameField
         _rectangle = GetRectangle(graphicsDevice);
 
         song = content.Load<Song>($"GameField/{_audioName}");
+
+        _approachCircle = new ApproachCircle(graphicsDevice, _approachCirclePosition, _rectangleDim);
+        _approachCircle.LoadContent(content);
+
+        _notes.LoadContent(content);
+        _notes.LoadNotesFromFile(_mapPath);
     }
 
     public void Update(GameTime gameTime)
@@ -70,17 +88,22 @@ public class GameField
         _tactPosition.X -= _tactSpeed * deltaTime;
 
         if (_tactPosition.X < 0) _tactPosition.X = _screenWidth;
+
+        _notes.Update(gameTime, currentSongTime);
     }
 
-    public void Draw(SpriteBatch spriteBatch, float backgroundDim, float rectangleDim)
+    public void Draw(SpriteBatch spriteBatch, float backgroundDim)
     {
         // Background
         spriteBatch.Draw(_background, new Vector2(0, 0), Color.White * (1 - backgroundDim));
         // Rectangle
-        spriteBatch.Draw(_rectangle, new Rectangle(0, 300, _screenWidth, 220), Color.Black * rectangleDim);
+        spriteBatch.Draw(_rectangle, new Rectangle(0, 300, _screenWidth, 220), Color.Black * _rectangleDim);
         // Tact
         if (_tactMoving)
             spriteBatch.Draw(_rectangle, new Rectangle((int)_tactPosition.X, (int)_tactPosition.Y, 1, 220), Color.White);
+        _approachCircle.Draw(spriteBatch, _approachCirclePosition);
+
+        _notes.Draw(spriteBatch);
     }
 
     float GetTactSpeed(float bpm)
@@ -91,8 +114,8 @@ public class GameField
 
     void LoadMapData()
     {
-        string mapXt = Path.Combine(Directory.GetCurrentDirectory(), "Content", "GameField", _map);
-        string[] lines = File.ReadAllLines(mapXt);
+        _mapPath = Path.Combine(Directory.GetCurrentDirectory(), "Content", "GameField", _map);
+        string[] lines = File.ReadAllLines(_mapPath);
 
         foreach (string line in lines)
         {
@@ -104,7 +127,7 @@ public class GameField
                 string timingsLine = lines[Array.IndexOf(lines, line) + 1];
 
                 string[] timings = timingsLine.Split(',');
-                _offset = float.Parse(timings[0]);
+                _offset = int.Parse(timings[0]);
                 _bpm = float.Parse(timings[1]);
             }
         }

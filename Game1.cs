@@ -38,7 +38,11 @@ public class Game1 : Game
         screenWidth = GraphicsDevice.Viewport.Width;
         screenHeight = GraphicsDevice.Viewport.Height;
 
-        _gameField = new GameField(screenWidth);
+        settings = Settings.Load();
+        backgroundDim = settings.backgroundDim;
+        rectangleDim = settings.rectangleDim;
+
+        _gameField = new GameField(screenWidth, rectangleDim);
 
         base.Initialize();
     }
@@ -46,14 +50,11 @@ public class Game1 : Game
     protected override void LoadContent()
     {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
+
         _cursor.LoadContent(Content);
         _gameField.LoadContent(Content, GraphicsDevice);
 
         _font = Content.Load<SpriteFont>("DefaultFont");
-
-        settings = Settings.Load();
-        backgroundDim = settings.backgroundDim;
-        rectangleDim = settings.rectangleDim;
     }
 
     protected override void Update(GameTime gameTime)
@@ -85,7 +86,7 @@ public class Game1 : Game
 
         _spriteBatch.Begin();
 
-        _gameField.Draw(_spriteBatch, backgroundDim, rectangleDim);
+        _gameField.Draw(_spriteBatch, backgroundDim);
         _cursor.Draw(_spriteBatch);
 
         _spriteBatch.DrawString(_font, $"{_fps} fps",
