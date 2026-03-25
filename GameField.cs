@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -18,17 +17,18 @@ public class GameField
     float _tactSpeed, _bpm, _offset;
     bool _tactMoving, _songStarted;
 
+    string _audioName, _backgroundName;
+
     public GameField(int screenWidth)
     {
         _map = "macaroom - akuma.xt";
-
         _screenWidth = screenWidth;
 
-        _tactPosition = new Vector2(_screenWidth / 2, 300);
+        // Load _audioName, _backgroundName, _bpm, _offset
+        LoadMapData();
 
-        _bpm = GetBPM();
+        _tactPosition = new Vector2(_screenWidth / 2, 300);
         _tactSpeed = GetTactSpeed(_bpm);
-        _offset = GetOffset();
 
         _tactMoving = false;
         _songStarted = false;
@@ -36,11 +36,11 @@ public class GameField
 
     public void LoadContent(ContentManager content, GraphicsDevice graphicsDevice)
     {
-        _background = GetBackground(content);
+        _background = content.Load<Texture2D>($"GameField/{_backgroundName}");
         _rectangle = GetRectangle(graphicsDevice);
         _tact = GetRectangle(graphicsDevice);
 
-        song = GetSong(content);
+        song = content.Load<Song>($"GameField/{_audioName}");
     }
 
     public void Update(GameTime gameTime)
@@ -89,22 +89,17 @@ public class GameField
         return _screenWidth / secondsPerTact;
     }
 
-    Song GetSong(ContentManager content)
+    void LoadMapData()
     {
         string mapXt = Path.Combine(Directory.GetCurrentDirectory(), "Content", "GameField", _map);
         string[] lines = File.ReadAllLines(mapXt);
-        string audioName = lines[3][15..].Split('.')[0];
 
-        return content.Load<Song>($"GameField/{audioName}");
-    }
+        _audioName = lines[3][15..].Split('.')[0];
+        _backgroundName = lines[4][20..].Split('.')[0];
 
-    Texture2D GetBackground(ContentManager content)
-    {
-        string mapXt = Path.Combine(Directory.GetCurrentDirectory(), "Content", "GameField", _map);
-        string[] lines = File.ReadAllLines(mapXt);
-        string backgroundName = lines[4][20..].Split('.')[0];
-
-        return content.Load<Texture2D>($"GameField/{backgroundName}");
+        string[] timings = lines[7].Split(',');
+        _offset = float.Parse(timings[0]);
+        _bpm = float.Parse(timings[1]);
     }
 
     Texture2D GetRectangle(GraphicsDevice graphicsDevice)
@@ -113,27 +108,5 @@ public class GameField
         _rectangle.SetData([Color.White]);
 
         return _rectangle;
-    }
-
-    float GetBPM()
-    {
-        string mapXt = Path.Combine(Directory.GetCurrentDirectory(), "Content", "GameField", _map);
-        string[] lines = File.ReadAllLines(mapXt);
-        string[] timings = lines[7].Split(',');
-
-        float bpm = float.Parse(timings[1]);
-
-        return bpm;
-    }
-
-    float GetOffset()
-    {
-        string mapXt = Path.Combine(Directory.GetCurrentDirectory(), "Content", "GameField", _map);
-        string[] lines = File.ReadAllLines(mapXt);
-        string[] timings = lines[7].Split(',');
-
-        float offset = float.Parse(timings[0]);
-
-        return offset;
     }
 }
