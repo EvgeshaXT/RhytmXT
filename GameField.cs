@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -14,8 +15,8 @@ public class GameField
     readonly int _screenWidth;
 
     Vector2 _tactPosition;
-    float _tactSpeed, _bpm, _offset, _currentDelay;
-    bool _tactMoving;
+    float _tactSpeed, _bpm, _offset;
+    bool _tactMoving, _songStarted;
 
     public GameField(int screenWidth)
     {
@@ -29,8 +30,8 @@ public class GameField
         _tactSpeed = GetTactSpeed(_bpm);
         _offset = GetOffset();
 
-        _currentDelay = _offset / 1000;
         _tactMoving = false;
+        _songStarted = false;
     }
 
     public void LoadContent(ContentManager content, GraphicsDevice graphicsDevice)
@@ -40,24 +41,32 @@ public class GameField
         _tact = GetRectangle(graphicsDevice);
 
         song = GetSong(content);
-        MediaPlayer.Play(song);
     }
 
     public void Update(GameTime gameTime)
     {
-        float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
+        if (!_songStarted)
+        {
+            MediaPlayer.Play(song);
+            _songStarted = true;
+            return;
+        }
+
+        if (MediaPlayer.State != MediaState.Playing)
+            return;
+
+        double currentSongTime = MediaPlayer.PlayPosition.TotalMilliseconds;
 
         if (!_tactMoving)
         {
-            _currentDelay -= deltaTime;
-
-            if (_currentDelay <= deltaTime)
+            if (currentSongTime >= _offset)
             {
                 _tactMoving = true;
             }
             return;
         }
 
+        float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
         _tactPosition.X -= _tactSpeed * deltaTime;
 
         if (_tactPosition.X < 0) _tactPosition.X = _screenWidth;
