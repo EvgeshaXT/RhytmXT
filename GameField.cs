@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -8,7 +9,7 @@ namespace RhytmXT;
 
 public class GameField
 {
-    Texture2D _background, _rectangle, _tact;
+    Texture2D _background, _rectangle;
     Song song;
     string _map;
     readonly int _screenWidth;
@@ -21,7 +22,7 @@ public class GameField
 
     public GameField(int screenWidth)
     {
-        _map = "macaroom - akuma.xt";
+        _map = "Calvin Harris - Feel So Close (SKIYE DnB Remix).xt";
         _screenWidth = screenWidth;
 
         // Load _audioName, _backgroundName, _bpm, _offset
@@ -38,7 +39,6 @@ public class GameField
     {
         _background = content.Load<Texture2D>($"GameField/{_backgroundName}");
         _rectangle = GetRectangle(graphicsDevice);
-        _tact = GetRectangle(graphicsDevice);
 
         song = content.Load<Song>($"GameField/{_audioName}");
     }
@@ -80,7 +80,7 @@ public class GameField
         spriteBatch.Draw(_rectangle, new Rectangle(0, 300, _screenWidth, 220), Color.Black * rectangleDim);
         // Tact
         if (_tactMoving)
-            spriteBatch.Draw(_tact, new Rectangle((int)_tactPosition.X, (int)_tactPosition.Y, 1, 220), Color.White);
+            spriteBatch.Draw(_rectangle, new Rectangle((int)_tactPosition.X, (int)_tactPosition.Y, 1, 220), Color.White);
     }
 
     float GetTactSpeed(float bpm)
@@ -94,12 +94,20 @@ public class GameField
         string mapXt = Path.Combine(Directory.GetCurrentDirectory(), "Content", "GameField", _map);
         string[] lines = File.ReadAllLines(mapXt);
 
-        _audioName = lines[3][15..].Split('.')[0];
-        _backgroundName = lines[4][20..].Split('.')[0];
+        foreach (string line in lines)
+        {
+            if (line.StartsWith("AudioFilename:")) _audioName = line[15..].Split('.')[0];
+            else if (line.StartsWith("BackgroundFilename:")) _backgroundName = line[20..].Split('.')[0];
 
-        string[] timings = lines[7].Split(',');
-        _offset = float.Parse(timings[0]);
-        _bpm = float.Parse(timings[1]);
+            else if (line.StartsWith("[Timings]"))
+            {
+                string timingsLine = lines[Array.IndexOf(lines, line) + 1];
+
+                string[] timings = timingsLine.Split(',');
+                _offset = float.Parse(timings[0]);
+                _bpm = float.Parse(timings[1]);
+            }
+        }
     }
 
     Texture2D GetRectangle(GraphicsDevice graphicsDevice)
