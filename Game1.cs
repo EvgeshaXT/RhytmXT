@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -12,6 +11,7 @@ public class Game1 : Game
     Cursor _cursor;
     GameField _gameField;
     Settings settings;
+    int screenWidth, screenHeight;
 
     float backgroundDim, rectangleDim;
 
@@ -19,9 +19,6 @@ public class Game1 : Game
     int _frameCount;
     double _elapsedTime, _fps;
     Vector2 textSize;
-
-    static int screenWidth;
-    static int screenHeight;
 
     public Game1()
     {
@@ -76,7 +73,7 @@ public class Game1 : Game
             _frameCount = 0;
             _elapsedTime = 0;
         }
-        
+
         textSize = _font.MeasureString($"{_fps} fps");
 
         base.Update(gameTime);
