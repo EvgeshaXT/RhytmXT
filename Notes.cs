@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using Microsoft.Xna.Framework;
@@ -12,7 +13,9 @@ public class Notes
     List<Note> _notes;
     int _screenWidth;
     float _speed, _hitPositionX;
+    double _notesOffset;
     int _nextNoteIndex;
+    Vector2 _startPosition;
 
     public Notes(int screenWidth, float tactSpeed, float hitPositionX)
     {
@@ -27,11 +30,14 @@ public class Notes
     public void LoadContent(ContentManager content)
     {
         _texture = content.Load<Texture2D>("taikohitcircle");
+
+        _startPosition = new Vector2(_screenWidth + _texture.Width / 2, 410);
+        CalculateNotesOffset(_startPosition.X);
     }
 
     public void Update(GameTime gameTime, double currentSongTime)
     {
-        while (_nextNoteIndex < _notes.Count && _notes[_nextNoteIndex].StartTime <= currentSongTime)
+        while (_nextNoteIndex < _notes.Count && currentSongTime >= _notes[_nextNoteIndex].Timing)
         {
             _notes[_nextNoteIndex].Activate();
             _nextNoteIndex++;
@@ -42,7 +48,7 @@ public class Notes
             note.Update(gameTime);
         }
 
-        _notes.RemoveAll(n => n.IsOffScreen());
+        // _notes.RemoveAll(n => n.IsOffScreen(_hitPositionX));
     }
 
     public void Draw(SpriteBatch spriteBatch)
@@ -72,13 +78,18 @@ public class Notes
 
                 string[] parts = line.Split(',');
 
-                int timing = int.Parse(parts[0]);
+                double timing = int.Parse(parts[0]) - _notesOffset;
                 int type = int.Parse(parts[1]);
                 int hitSound = int.Parse(parts[2]);
 
-                Note note = new(timing, type, hitSound, _speed, _hitPositionX, _screenWidth, _texture);
+                Note note = new(timing, type, hitSound, _speed, _startPosition, _texture);
                 _notes.Add(note);
             }
         }
+    }
+
+    void CalculateNotesOffset(float noteStartPositionX)
+    {
+        _notesOffset = (noteStartPositionX - _hitPositionX) / _speed * 1000f;
     }
 }
