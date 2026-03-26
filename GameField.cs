@@ -34,21 +34,21 @@ public class GameField
         _screenWidth = screenWidth;
         _rectangleDim = rectangleDim;
 
-        // Load _audioName, _backgroundName, _bpm, _offset
-        LoadMapData();
-
         _tactPosition = new Vector2(350, 300);
-        _tactSpeed = GetTactSpeed(_bpm);
 
         _tactMoving = false;
         _songStarted = false;
 
         _approachCirclePosition = new Vector2(350, 410);
-        _notes = new Notes(_screenWidth, _tactSpeed, _approachCirclePosition.X);
     }
 
     public void LoadContent(ContentManager content, GraphicsDevice graphicsDevice)
     {
+        // Load _audioName, _backgroundName, _bpm, _offset
+        LoadMapData();
+        _tactSpeed = GetTactSpeed(_bpm);
+        _notes = new Notes(_screenWidth, _tactSpeed);
+
         _background = content.Load<Texture2D>($"GameField/{_backgroundName}");
         _rectangle = GetRectangle(graphicsDevice);
 
@@ -89,7 +89,7 @@ public class GameField
 
         if (_tactPosition.X < 0) _tactPosition.X = _screenWidth;
 
-        _notes.Update(gameTime, currentSongTime);
+        _notes.Update(deltaTime, currentSongTime);
     }
 
     public void Draw(SpriteBatch spriteBatch, float backgroundDim)
