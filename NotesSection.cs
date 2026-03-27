@@ -10,6 +10,7 @@ namespace RhytmXT;
 public class Note
 {
     Texture2D _texture;
+    Texture2D _textureOverlay;
     Vector2 _position, _origin;
     int _type;
     Color _color;
@@ -17,9 +18,10 @@ public class Note
     float _speed, _startPositionX;
     bool _isActive;
 
-    public Note(Texture2D texture, Vector2 startPosition, Vector2 origin, int type, int hitsound, int startTime, float tactSpeed)
+    public Note(Texture2D texture, Texture2D textureOverlay, Vector2 startPosition, Vector2 origin, int type, int hitsound, int startTime, float tactSpeed)
     {
         _texture = texture;
+        _textureOverlay = textureOverlay;
         _position = startPosition;
         _startPositionX = startPosition.X;
         _origin = origin;
@@ -49,6 +51,8 @@ public class Note
         if (!_isActive) return;
         
         spriteBatch.Draw(_texture, _position, null, _color, 0, _origin, 1f, SpriteEffects.None, 0f);
+        if (_textureOverlay != null)
+            spriteBatch.Draw(_textureOverlay, _position, null, Color.White, 0, _origin, 1f, SpriteEffects.None, 0f);
     }
 
     public void Activate()
@@ -61,6 +65,7 @@ public class Notes
 {
     List<Note> _notes;
     Texture2D _texture;
+    Texture2D _textureOverlay;
     Vector2 _startPosition, _origin;
     int _screenWidth, _timing, _type, _hitSound, _startTime, _nextNoteIndex;
     float _tactSpeed, _approachCirclePositionX;
@@ -79,6 +84,15 @@ public class Notes
     public void LoadContent(ContentManager content)
     {
         _texture = content.Load<Texture2D>("taikohitcircle");
+        try
+        {
+            _textureOverlay = content.Load<Texture2D>("taikohitcircleoverlay");
+        }
+        catch
+        {
+            _textureOverlay = null;
+        }
+
         _startPosition = new Vector2(_screenWidth + _texture.Width / 2, 410);
         _origin = new Vector2(_texture.Width / 2, _texture.Height / 2);
     }
@@ -107,7 +121,7 @@ public class Notes
                 _type = int.Parse(parts[1]);
                 _hitSound = int.Parse(parts[2]);
 
-                Note note = new(_texture, _startPosition, _origin, _type, _hitSound, _startTime, _tactSpeed);
+                Note note = new(_texture, _textureOverlay, _startPosition, _origin, _type, _hitSound, _startTime, _tactSpeed);
                 _notes.Add(note);
             }
         }
