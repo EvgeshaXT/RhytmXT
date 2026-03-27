@@ -15,7 +15,7 @@ public class GameField
     readonly int _screenWidth;
 
     Vector2 _tactPosition;
-    float _tactSpeed, _bpm;
+    float _tactStartPositionX, _tactSpeed, _bpm;
     int _offset;
     bool _tactMoving, _songStarted;
 
@@ -34,7 +34,8 @@ public class GameField
         _screenWidth = screenWidth;
         _rectangleDim = rectangleDim;
 
-        _tactPosition = new Vector2(350, 300);
+        _tactStartPositionX = 350;
+        _tactPosition = new Vector2(_tactStartPositionX, 300);
 
         _tactMoving = false;
         _songStarted = false;
@@ -46,8 +47,9 @@ public class GameField
     {
         // Load _audioName, _backgroundName, _bpm, _offset
         LoadMapData();
-        _tactSpeed = GetTactSpeed(_bpm);
-        _notes = new Notes(_screenWidth, _tactSpeed);
+        _tactSpeed = GetTactSpeed();
+
+        _notes = new Notes(_screenWidth, _tactSpeed, _approachCirclePosition.X);
 
         _background = content.Load<Texture2D>($"GameField/{_backgroundName}");
         _rectangle = GetRectangle(graphicsDevice);
@@ -80,16 +82,14 @@ public class GameField
             if (currentSongTime >= _offset)
             {
                 _tactMoving = true;
+                _tactPosition.X = _tactStartPositionX;
             }
             return;
         }
 
-        float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
-        _tactPosition.X -= _tactSpeed * deltaTime;
+        _tactPosition.X = GetTactPosition(currentSongTime);
 
-        if (_tactPosition.X < 0) _tactPosition.X = _screenWidth;
-
-        _notes.Update(deltaTime, currentSongTime);
+        _notes.Update(currentSongTime);
     }
 
     public void Draw(SpriteBatch spriteBatch, float backgroundDim)
@@ -106,10 +106,23 @@ public class GameField
         _notes.Draw(spriteBatch);
     }
 
-    float GetTactSpeed(float bpm)
+    float GetTactSpeed()
     {
-        float secondsPerTact = 60f / bpm * 4;
+        float secondsPerTact = 60f / _bpm * 4;
         return _screenWidth / secondsPerTact;
+    }
+
+    float GetTactPosition(double currentSongTime)
+    {
+        if (!_tactMoving) return _tactPosition.X;
+
+        double elapsedTime = (currentSongTime - _offset) / 1000;
+        float distance = _tactSpeed * (float)Math.Max(0, elapsedTime);
+        float positionX = _tactStartPositionX - distance;
+
+        while (positionX < 0) positionX += _screenWidth;
+
+        return positionX;
     }
 
     void LoadMapData()

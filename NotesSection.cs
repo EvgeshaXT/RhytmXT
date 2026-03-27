@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using Microsoft.Xna.Framework;
@@ -13,13 +14,14 @@ public class Note
     int _type;
     Color _color;
     public int StartTime { get; set; }
-    float _speed;
+    float _speed, _startPositionX;
     bool _isActive;
 
     public Note(Texture2D texture, Vector2 startPosition, Vector2 origin, int type, int hitsound, int startTime, float tactSpeed)
     {
         _texture = texture;
         _position = startPosition;
+        _startPositionX = startPosition.X;
         _origin = origin;
         
         _type = type;
@@ -33,11 +35,13 @@ public class Note
         _isActive = false;
     }
 
-    public void Update(float deltaTime)
+    public void Update(double currentSongTime)
     {
         if (!_isActive) return;
         
-        _position.X -= _speed * deltaTime;
+        double elapsedTime = (currentSongTime - StartTime) / 1000f;
+        float distance = _speed * (float)Math.Max(0, elapsedTime);
+        _position.X = _startPositionX - distance;
     }
 
     public void Draw(SpriteBatch spriteBatch)
@@ -59,9 +63,9 @@ public class Notes
     Texture2D _texture;
     Vector2 _startPosition, _origin;
     int _screenWidth, _timing, _type, _hitSound, _startTime, _nextNoteIndex;
-    float _tactSpeed;
+    float _tactSpeed, _approachCirclePositionX;
 
-    public Notes(int screenWidth, float tactSpeed)
+    public Notes(int screenWidth, float tactSpeed, float approachCirclePositionX)
     {
         _notes = [];
         
@@ -69,6 +73,7 @@ public class Notes
         _nextNoteIndex = 0;
 
         _tactSpeed = tactSpeed;
+        _approachCirclePositionX = approachCirclePositionX;
     }
 
     public void LoadContent(ContentManager content)
@@ -108,7 +113,7 @@ public class Notes
         }
     }
 
-    public void Update(float deltaTime, double currentSongTime)
+    public void Update(double currentSongTime)
     {
         while (_nextNoteIndex < _notes.Count && currentSongTime >= _notes[_nextNoteIndex].StartTime)
         {
@@ -118,7 +123,7 @@ public class Notes
 
         foreach (Note note in _notes)
         {
-            note.Update(deltaTime);
+            note.Update(currentSongTime);
         }
     }
 
@@ -132,8 +137,9 @@ public class Notes
 
     int SetStartTime()
     {
-        // Only for "macaroom - akuma.xt"!
-        int startTime = _timing - 1570;
-        return startTime;
+        float distance = _screenWidth + _texture.Width / 2 - _approachCirclePositionX;
+        float time = distance / _tactSpeed * 1000f;
+
+        return _timing - (int)Math.Round(time);
     }
 }
