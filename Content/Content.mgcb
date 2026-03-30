@@ -110,18 +110,6 @@
 /processorParam:Quality=Best
 /build:taiko-normal-hitclap.wav
 
-#begin taiko-normal-hitclap.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:taiko-normal-hitclap.wav
-
-#begin taiko-normal-hitnormal.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:taiko-normal-hitnormal.wav
-
 #begin taiko-normal-hitnormal.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
