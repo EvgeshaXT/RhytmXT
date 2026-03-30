@@ -16,7 +16,7 @@ public class Game1 : Game
     float backgroundDim, rectangleDim;
 
     SpriteFont _font;
-    int _frameCount;
+    int _frameCount, _localOffset;
     double _elapsedTime, _fps;
     Vector2 textSize;
 
@@ -41,8 +41,9 @@ public class Game1 : Game
         settings = Settings.Load();
         backgroundDim = settings.backgroundDim;
         rectangleDim = settings.rectangleDim;
+        _localOffset = settings.localOffset;
 
-        _gameField = new GameField(screenWidth, rectangleDim);
+        _gameField = new GameField(screenWidth, rectangleDim, _localOffset);
 
         base.Initialize();
     }
@@ -63,7 +64,7 @@ public class Game1 : Game
             Exit();
 
         _cursor.Update();
-        _gameField.Update(gameTime);
+        _gameField.Update();
 
         _elapsedTime += gameTime.ElapsedGameTime.TotalSeconds;
         _frameCount++;

@@ -16,7 +16,7 @@ public class GameField
 
     Vector2 _tactPosition;
     float _tactStartPositionX, _tactSpeed, _bpm;
-    int _offset;
+    int _offset, _localOffset;
     bool _tactMoving, _songStarted;
 
     string _audioName, _backgroundName;
@@ -28,7 +28,7 @@ public class GameField
 
     Notes _notes;
 
-    public GameField(int screenWidth, float rectangleDim)
+    public GameField(int screenWidth, float rectangleDim, int localOffset)
     {
         _map = "macaroom - akuma.xt";
         _screenWidth = screenWidth;
@@ -36,6 +36,8 @@ public class GameField
 
         _tactStartPositionX = 350;
         _tactPosition = new Vector2(_tactStartPositionX, 300);
+
+        _localOffset = localOffset;
 
         _tactMoving = false;
         _songStarted = false;
@@ -49,7 +51,7 @@ public class GameField
         LoadMapData();
         _tactSpeed = GetTactSpeed();
 
-        _notes = new Notes(_screenWidth, _tactSpeed, _approachCirclePosition.X);
+        _notes = new Notes(_screenWidth, _tactSpeed, _approachCirclePosition.X, _localOffset);
 
         _background = content.Load<Texture2D>($"GameField/{_backgroundName}");
         _rectangle = GetRectangle(graphicsDevice);
@@ -63,7 +65,7 @@ public class GameField
         _notes.LoadNotesFromFile(_mapPath);
     }
 
-    public void Update(GameTime gameTime)
+    public void Update()
     {
         if (!_songStarted)
         {
@@ -141,7 +143,7 @@ public class GameField
                 string timingsLine = lines[Array.IndexOf(lines, line) + 1];
 
                 string[] timings = timingsLine.Split(',');
-                _offset = int.Parse(timings[0]);
+                _offset = int.Parse(timings[0]) + _localOffset;
                 _bpm = float.Parse(timings[1]);
             }
         }

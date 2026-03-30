@@ -7,6 +7,7 @@ public class Settings
 {
     public float backgroundDim { get; set; }
     public float rectangleDim { get; set; }
+    public int localOffset { get; set; }
 
     public static Settings Load()
     {
@@ -14,7 +15,7 @@ public class Settings
         {
             if (fs.Length == 0)
             {
-                return new Settings { backgroundDim = 0.5f, rectangleDim = 0.8f };
+                return new Settings { backgroundDim = 0.5f, rectangleDim = 0.8f, localOffset = 0 };
             }
 
             Settings settings = JsonSerializer.Deserialize<Settings>(fs);
