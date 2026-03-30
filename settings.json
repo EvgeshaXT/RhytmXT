@@ -1,5 +1,28 @@
 {
     "backgroundDim": 0.3,
     "rectangleDim": 0.6,
-    "localOffset": 80
+    "localOffset": 80,
+    "keysCount": 2,
+
+    "keyBinds":
+    {
+        "2keys":
+        {
+            "don1": "D1",
+            "don2": "D2",
+            "rim1": "OemOpenBrackets",
+            "rim2": "OemCloseBrackets"
+        },
+
+        "3keys":
+        {
+            "don1": "D1",
+            "don2": "D2",
+            "don3": "D3",
+
+            "rim1": "R",
+            "rim2": "OemOpenBrackets",
+            "rim3": "OemCloseBrackets"
+        }
+    }
 }

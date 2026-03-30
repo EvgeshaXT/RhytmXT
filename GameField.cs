@@ -27,9 +27,12 @@ public class GameField
     public float _rectangleDim;
 
     Notes _notes;
+    Drum _drum;
 
-    public GameField(int screenWidth, float rectangleDim, int localOffset)
+    public GameField(int screenWidth, float rectangleDim, int localOffset, Settings settings)
     {
+        _drum = new Drum(settings);
+
         _map = "macaroom - akuma.xt";
         _screenWidth = screenWidth;
         _rectangleDim = rectangleDim;
@@ -61,12 +64,15 @@ public class GameField
         _approachCircle = new ApproachCircle(graphicsDevice, _approachCirclePosition, _rectangleDim);
         _approachCircle.LoadContent(content);
 
+        _drum.LoadContent(content);
         _notes.LoadContent(content);
         _notes.LoadNotesFromFile(_mapPath);
     }
 
     public void Update()
     {
+        _drum.Update();
+        
         if (!_songStarted)
         {
             MediaPlayer.Play(song);
@@ -90,7 +96,6 @@ public class GameField
         }
 
         _tactPosition.X = GetTactPosition(currentSongTime);
-
         _notes.Update(currentSongTime);
     }
 

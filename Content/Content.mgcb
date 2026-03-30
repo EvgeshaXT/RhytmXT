@@ -80,6 +80,54 @@
 /processorParam:TextureFormat=Color
 /build:GameField/mrow.jpg
 
+#begin taiko-drum-inner.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:taiko-drum-inner.png
+
+#begin taiko-drum-outer.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:taiko-drum-outer.png
+
+#begin taiko-normal-hitclap.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:taiko-normal-hitclap.wav
+
+#begin taiko-normal-hitclap.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:taiko-normal-hitclap.wav
+
+#begin taiko-normal-hitnormal.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:taiko-normal-hitnormal.wav
+
+#begin taiko-normal-hitnormal.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:taiko-normal-hitnormal.wav
+
 #begin taikohitcircle.png
 /importer:TextureImporter
 /processor:TextureProcessor

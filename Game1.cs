@@ -1,4 +1,6 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using System.IO;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -32,19 +34,27 @@ public class Game1 : Game
 
     protected override void Initialize()
     {
-        _cursor = new Cursor();
-        FullScreen(_graphics);
-
-        screenWidth = GraphicsDevice.Viewport.Width;
-        screenHeight = GraphicsDevice.Viewport.Height;
-
-        settings = Settings.Load();
-        backgroundDim = settings.backgroundDim;
-        rectangleDim = settings.rectangleDim;
-        _localOffset = settings.localOffset;
-
-        _gameField = new GameField(screenWidth, rectangleDim, _localOffset);
-
+        try
+        {
+            _cursor = new Cursor();
+            FullScreen(_graphics);
+            
+            screenWidth = GraphicsDevice.Viewport.Width;
+            screenHeight = GraphicsDevice.Viewport.Height;
+            
+            settings = Settings.Load();
+            backgroundDim = settings.backgroundDim;
+            rectangleDim = settings.rectangleDim;
+            _localOffset = settings.localOffset;
+            
+            _gameField = new GameField(screenWidth, rectangleDim, _localOffset, settings);
+        }
+        catch (Exception ex)
+        {
+            File.AppendAllText("log.txt", $"Initialize Error: {ex}\n");
+            throw;
+        }
+        
         base.Initialize();
     }
 
