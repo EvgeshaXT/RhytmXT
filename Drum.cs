@@ -1,3 +1,4 @@
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -99,6 +100,13 @@ public class Drum
                 _processedPresses.Remove(keyBind.Key);
             }
         }
+    }
+
+    public void Draw(SpriteBatch spriteBatch)
+    {
+        // TO Do
+        spriteBatch.Draw(_innerTexture, new Vector2(200, 410), null, Color.White, 0,
+                        new Vector2(_innerTexture.Width / 2, _innerTexture.Height / 2), 1f, SpriteEffects.None, 0f);
     }
 }
 

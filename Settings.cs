@@ -27,6 +27,7 @@ public class Settings
 
                     keyBinds = new Dictionary<string, Dictionary<string, string>>
                     {
+                        // To Do: fix keys
                         ["2keys"] = new Dictionary<string, string>
                         {
                             ["don1"] = "1",

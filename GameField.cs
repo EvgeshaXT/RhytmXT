@@ -108,7 +108,8 @@ public class GameField
         // Tact
         if (_tactMoving)
             spriteBatch.Draw(_rectangle, new Rectangle((int)_tactPosition.X, (int)_tactPosition.Y, 1, 220), Color.White);
-
+            
+        _drum.Draw(spriteBatch);
         _approachCircle.Draw(spriteBatch, _approachCirclePosition);
 
         _notes.Draw(spriteBatch);
