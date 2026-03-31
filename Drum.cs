@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
 using System.Collections.Generic;
 
 namespace RhytmXT;
@@ -18,6 +19,8 @@ public class Drum
 
     Texture2D _innerTexture;
     Texture2D _outerTexture;
+    Vector2 _centreOrigin;
+    float _scale, _textureOffset;
 
     int _keysCount;
     List<KeyBinding> _donKeys;
@@ -26,6 +29,10 @@ public class Drum
 
     public Drum(Settings settings)
     {
+        _centreOrigin = new Vector2(150, 410);
+        _scale = 1.1f;
+        _textureOffset = 1.1f;
+
         _processedPresses = [];
 
         _keysCount = settings.keysCount;
@@ -52,16 +59,16 @@ public class Drum
         for (int i = 1; i <= _keysCount; i++)
         {
             string keyName = $"don{i}";
-            
+
             string keyString = _currentKeyBinds[keyName];
-            Keys key = (Keys)System.Enum.Parse(typeof(Keys), keyString);
+            Keys key = Enum.Parse<Keys>(keyString);
             _donKeys.Add(new KeyBinding(keyName, key));
         }
 
         for (int i = 1; i <= _keysCount; i++)
         {
             string keyName = $"rim{i}";
-            
+
             string keyString = _currentKeyBinds[keyName];
             Keys key = (Keys)System.Enum.Parse(typeof(Keys), keyString);
             _katKeys.Add(new KeyBinding(keyName, key));
@@ -104,9 +111,15 @@ public class Drum
 
     public void Draw(SpriteBatch spriteBatch)
     {
-        // TO Do
-        spriteBatch.Draw(_innerTexture, new Vector2(200, 410), null, Color.White, 0,
-                        new Vector2(_innerTexture.Width / 2, _innerTexture.Height / 2), 1f, SpriteEffects.None, 0f);
+        spriteBatch.Draw(_outerTexture, _centreOrigin + new Vector2(_outerTexture.Width / 2 + _textureOffset, 0), null, Color.White, 0,
+        new Vector2(_outerTexture.Width / 2, _outerTexture.Height / 2), _scale, SpriteEffects.None, 0f);
+        spriteBatch.Draw(_outerTexture, _centreOrigin + new Vector2(-_outerTexture.Width / 2 - _textureOffset, 0), null, Color.White, 0,
+        new Vector2(_outerTexture.Width / 2, _outerTexture.Height / 2), _scale, SpriteEffects.FlipHorizontally, 0f);
+
+        spriteBatch.Draw(_innerTexture, _centreOrigin + new Vector2(-_innerTexture.Width / 2 - _textureOffset, 0), null, Color.White, 0,
+        new Vector2(_innerTexture.Width / 2, _innerTexture.Height / 2), _scale, SpriteEffects.None, 0f);
+        spriteBatch.Draw(_innerTexture, _centreOrigin + new Vector2(_innerTexture.Width / 2 + _textureOffset, 0), null, Color.White, 0,
+        new Vector2(_innerTexture.Width / 2, _innerTexture.Height / 2), _scale, SpriteEffects.FlipHorizontally, 0f);
     }
 }
 
